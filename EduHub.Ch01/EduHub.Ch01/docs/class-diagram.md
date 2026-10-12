@@ -1,61 +1,46 @@
-﻿# Sơ đồ lớp sơ bộ (Class Diagram) - EduHub
-
-Sơ đồ thể hiện cấu trúc domain model của hệ thống EduHub gồm 5 class chính: `Member`, `Club`, `Event`, `Registration`, và `CheckIn`[cite: 2].
-
-```mermaid
+﻿```mermaid
 classDiagram
-    direction LR
+    %% Định nghĩa các Class và thuộc tính/mối quan hệ mẫu %%
 
-    class Member {
-        +Guid Id (PK)
-        +string Name
-        +string Email
-        +string StudentCode
-        +DateTime JoinedAt
-        +bool IsActive()
+    class User {
+        -int id
+        -string fullName
+        -string email
+        +login() bool
+        +logout() void
     }
 
-    class Club {
-        +Guid Id (PK)
-        +string Name
-        +string Description
-        +DateTime CreatedAt
-        +List~Member~ Members
-        +void AddMember(Member member)
-        +int MemberCount()
+    class Student {
+        -string studentId
+        -string major
+        +enrollCourse(Course course) void
     }
 
-    class Event {
-        +Guid Id (PK)
-        +Guid ClubId (FK)
-        +string Title
-        +DateTime Date
-        +int Capacity
-        +bool IsOnline
-        +bool HasCapacity(int registeredCount)
+    class Teacher {
+        -string teacherId
+        -string department
+        +createCourse() Course
     }
 
-    class Registration {
-        +Guid Id (PK)
-        +Guid MemberId (FK)
-        +Guid EventId (FK)
-        +DateTime RegisteredAt
-        +RegistrationStatus Status
-        +void Confirm()
-        +void Cancel()
+    class Course {
+        -int courseId
+        -string title
+        -string description
+        +addLesson(Lesson lesson) void
     }
 
-    class CheckIn {
-        +Guid Id (PK)
-        +Guid RegistrationId (FK)
-        +DateTime CheckedInAt
-        +CheckInMethod Method
-        +string Summary()
+    class Lesson {
+        -int lessonId
+        -string title
+        -string content
     }
 
-    Club "1" --> "*" Member : chứa / quản lý
-    Club "1" --> "*" Event : tổ chức
-    Member "*" --> "*" Event : đăng ký tham gia (qua Registration)
-    Event "1" --> "*" Registration : có các phiếu
-    Member "1" --> "*" Registration : thực hiện
-    Registration "1" --> "0..1" CheckIn : ghi nhận điểm danh
+    %% Kế thừa (Inheritance)
+    User <|-- Student
+    User <|-- Teacher
+
+    %% Quan hệ phụ thuộc / kết hợp (Association / Aggregation)
+    Teacher "1" --> "*" Course : Giảng dạy
+    Course "1" *-- "*" Lesson : Chứa các bài học
+    Student "*" --> "*" Course : Đăng ký học
+```
